@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block title %}Accueil - AutoMarket{% endblock %}
+
+{% block content %}
+<!-- Section Hero avec animation -->
+<div class="hero-section text-center py-5 bg-gradient-primary rounded mb-5 animate__animated animate__fadeIn" 
+     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <h1 class="display-4 text-white fw-bold animate__animated animate__bounceIn animate__delay-1s">
+            🚗 Bienvenue sur AutoMarket
+        </h1>
+        <p class="lead text-light fs-4 animate__animated animate__fadeInUp animate__delay-2s">
+            Trouvez la voiture de vos rêves parmi notre large sélection
+        </p>
+        <a href="{% url 'liste_voitures' %}" 
+           class="btn btn-warning btn-lg shadow-lg animate__animated animate__pulse animate__infinite"
+           style="animation-duration: 2s;">
+            🔍 Voir toutes les voitures
+        </a>
+    </div>
+</div>
+
+<!-- Marques populaires -->
+<section class="mb-5">
+    <h2 class="mb-4 text-primary fw-bold border-bottom pb-2">
+        <i class="fas fa-crown text-warning"></i> Marques populaires
+    </h2>
+    <div class="row">
+        {% for marque in marques_populaires %}
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card text-center h-100 shadow-sm border-0 hover-card animate__animated animate__fadeInUp"
+                 style="animation-delay: {{ forloop.counter0|add:0.1 }}s;">
+                <div class="card-body py-4">
+                    {% if marque.logo %}
+                    <img src="{{ marque.logo.url }}" alt="{{ marque.nom }}" 
+                         class="img-fluid mb-3 brand-logo" 
+                         style="max-height: 60px; transition: transform 0.3s;">
+                    {% endif %}
+                    <h5 class="card-title text-dark fw-bold">{{ marque.nom }}</h5>
+                    <p class="card-text">
+                        <span class="badge bg-info text-dark">
+                            <i class="fas fa-globe"></i> {{ marque.pays }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Voitures récentes -->
+<section class="mb-5">
+    <h2 class="mb-4 text-success fw-bold border-bottom pb-2">
+        <i class="fas fa-rocket text-success"></i> Nouveautés
+    </h2>
+    <div class="row">
+        {% for voiture in voitures_recentes %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-lg border-0 hover-card animate__animated animate__fadeInUp"
+                 style="animation-delay: {{ forloop.counter0|add:0.2 }}s;">
+                <div class="position-relative overflow-hidden">
+                    <div class="card-img-overlay">
+                        <span class="badge bg-success bg-gradient">Nouveau</span>
+                    </div>
+                    <img src="{{ voiture.image_principale.url }}" 
+                         class="card-img-top car-image" 
+                         alt="{{ voiture.modele }}" 
+                         style="height: 200px; object-fit: cover; transition: transform 0.5s;">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title text-dark fw-bold">
+                        <i class="fas fa-car text-primary"></i> 
+                        {{ voiture.modele.marque.nom }} {{ voiture.modele.nom }}
+                    </h5>
+                    <p class="card-text">
+                        <strong class="text-success fs-4">{{ voiture.prix }} €</strong><br>
+                        <span class="badge bg-light text-dark">
+                            <i class="fas fa-calendar-alt"></i> {{ voiture.annee }}
+                        </span>
+                        <span class="badge bg-light text-dark ms-1">
+                            <i class="fas fa-road"></i> {{ voiture.kilometrage }} km
+                        </span>
+                    </p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'detail_voiture' voiture.id %}" 
+                       class="btn btn-outline-success btn-sm w-100 pulse-button">
+                        <i class="fas fa-search"></i> Voir détails
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Voitures en promo -->
+<section>
+    <h2 class="mb-4 text-danger fw-bold border-bottom pb-2">
+        <i class="fas fa-bolt text-warning"></i> Bonnes affaires
+    </h2>
+    <div class="row">
+        {% for voiture in voitures_promo %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-danger shadow-lg promo-card animate__animated animate__pulse"
+                 style="animation-delay: {{ forloop.counter0|add:0.3 }}s;">
+                <div class="card-header bg-danger bg-gradient text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-fire fa-spin me-2"></i>
+                        <span class="fw-bold">🔥 PROMOTION EXCEPTIONNELLE</span>
+                    </div>
+                </div>
+                <div class="position-relative overflow-hidden">
+                    <img src="{{ voiture.image_principale.url }}" 
+                         class="card-img-top car-image" 
+                         alt="{{ voiture.modele }}" 
+                         style="height: 200px; object-fit: cover; transition: transform 0.5s;">
+                    <div class="promo-badge">
+                        <span class="badge bg-warning text-dark px-3 py-2">
+                            -20%
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title text-dark fw-bold">
+                        <i class="fas fa-bolt text-warning"></i>
+                        {{ voiture.modele.marque.nom }} {{ voiture.modele.nom }}
+                    </h5>
+                    <p class="card-text">
+                        <span class="text-decoration-line-through text-muted">
+                            {{ voiture.prix|add:5000 }} €
+                        </span><br>
+                        <strong class="text-danger fs-4">{{ voiture.prix }} €</strong><br>
+                        <span class="badge bg-danger bg-opacity-10 text-danger">
+                            <i class="fas fa-calendar-alt"></i> {{ voiture.annee }}
+                        </span>
+                        <span class="badge bg-danger bg-opacity-10 text-danger ms-1">
+                            <i class="fas fa-road"></i> {{ voiture.kilometrage }} km
+                        </span>
+                    </p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'detail_voiture' voiture.id %}" 
+                       class="btn btn-danger btn-gradient btn-sm w-100 shadow-sm">
+                        <i class="fas fa-gem"></i> Voir l'offre exclusive
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+.hover-card:hover {
+    transform: translateY(-10px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.hover-card:hover .car-image {
+    transform: scale(1.05);
+}
+
+.brand-logo:hover {
+    transform: scale(1.2);
+    transition: transform 0.3s ease;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.promo-card {
+    border: 2px solid #dc3545;
+    animation: borderPulse 2s infinite;
+}
+
+@keyframes borderPulse {
+    0% { border-color: #dc3545; }
+    50% { border-color: #ffc107; }
+    100% { border-color: #dc3545; }
+}
+
+.pulse-button {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(25, 135, 84, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); }
+}
+
+.promo-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+}
+
+.btn-gradient {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    border: none;
+    color: white;
+}
+
+.bg-gradient {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+}
+</style>
+{% endblock %}

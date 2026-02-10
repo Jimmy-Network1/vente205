@@ -1,0 +1,460 @@
+{% extends 'base.html' %}
+
+{% block title %}Détails - {{ voiture.modele.marque.nom }} {{ voiture.modele.nom }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid animate__animated animate__fadeIn">
+    <div class="row g-4">
+        <!-- Section principale -->
+        <div class="col-lg-8">
+            <!-- En-tête avec gradient -->
+            <div class="card shadow-lg border-0 mb-4 animate__animated animate__slideInDown">
+                <div class="card-header gradient-header text-white py-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="display-5 fw-bold mb-2">
+                                <i class="fas fa-car me-3 fa-shake" style="animation-duration: 2s;"></i>
+                                {{ voiture.modele.marque.nom }} {{ voiture.modele.nom }}
+                            </h1>
+                            <p class="mb-0 opacity-75">
+                                <i class="fas fa-calendar me-1"></i> {{ voiture.annee }} • 
+                                <i class="fas fa-road ms-2 me-1"></i> {{ voiture.kilometrage }} km
+                            </p>
+                        </div>
+                        <div>
+                            {% if voiture.est_vendue %}
+                            <span class="badge bg-danger bg-gradient px-4 py-3 fs-5 animate__animated animate__pulse animate__infinite">
+                                <i class="fas fa-tags me-2"></i> VENDUE
+                            </span>
+                            {% else %}
+                            <span class="badge bg-success bg-gradient px-4 py-3 fs-5">
+                                <i class="fas fa-bolt me-2"></i> DISPONIBLE
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Prix en vedette -->
+                <div class="card-body bg-gradient-price text-center py-5">
+                    <h2 class="display-2 fw-bold text-white animate__animated animate__bounceIn">
+                        {{ voiture.prix }} €
+                    </h2>
+                    <p class="text-light mb-0 fs-5">
+                        <i class="fas fa-percentage me-2"></i>Financement disponible • 
+                        <i class="fas fa-shield-alt ms-2 me-2"></i>Garantie 3 mois
+                    </p>
+                </div>
+            </div>
+
+            <!-- Carrousel d'images -->
+            <div class="card shadow border-0 mb-4 animate__animated animate__fadeInLeft">
+                <div class="card-body p-4">
+                    <h4 class="text-primary fw-bold mb-4">
+                        <i class="fas fa-images me-2 fa-spin" style="animation-duration: 3s;"></i> Galerie
+                    </h4>
+                    <div class="carousel-placeholder text-center p-5 bg-gradient-light rounded">
+                        <i class="fas fa-camera fa-5x text-secondary mb-3 car-icon"></i>
+                        <p class="text-muted">Galerie d'images du véhicule</p>
+                        <button class="btn btn-primary btn-gradient mt-2">
+                            <i class="fas fa-plus-circle me-2"></i> Voir toutes les photos
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations techniques -->
+            <div class="card shadow border-0 mb-4 animate__animated animate__fadeInUp">
+                <div class="card-body p-4">
+                    <h4 class="text-success fw-bold mb-4">
+                        <i class="fas fa-cogs me-2 fa-shake"></i> Informations techniques
+                    </h4>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="info-card p-3 rounded bg-success bg-opacity-10 border-start border-success border-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-calendar-alt text-success fa-lg me-3"></i>
+                                    <span class="fw-bold">Année</span>
+                                </div>
+                                <h5 class="text-dark mb-0">{{ voiture.annee }}</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card p-3 rounded bg-primary bg-opacity-10 border-start border-primary border-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-tachometer-alt text-primary fa-lg me-3"></i>
+                                    <span class="fw-bold">Kilométrage</span>
+                                </div>
+                                <h5 class="text-dark mb-0">{{ voiture.kilometrage }} km</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card p-3 rounded bg-warning bg-opacity-10 border-start border-warning border-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-palette text-warning fa-lg me-3"></i>
+                                    <span class="fw-bold">Couleur</span>
+                                </div>
+                                <h5 class="text-dark mb-0">{{ voiture.couleur }}</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card p-3 rounded bg-danger bg-opacity-10 border-start border-danger border-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-star text-danger fa-lg me-3"></i>
+                                    <span class="fw-bold">État</span>
+                                </div>
+                                <h5 class="text-dark mb-0">{{ voiture.etat }}</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card p-3 rounded bg-info bg-opacity-10 border-start border-info border-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-gas-pump text-info fa-lg me-3"></i>
+                                    <span class="fw-bold">Carburant</span>
+                                </div>
+                                <h5 class="text-dark mb-0">{{ voiture.modele.type_carburant }}</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card p-3 rounded bg-purple bg-opacity-10 border-start border-purple border-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-cog text-purple fa-lg me-3"></i>
+                                    <span class="fw-bold">Transmission</span>
+                                </div>
+                                <h5 class="text-dark mb-0">{{ voiture.modele.transmission }}</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card p-3 rounded bg-teal bg-opacity-10 border-start border-teal border-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-horse-head text-teal fa-lg me-3"></i>
+                                    <span class="fw-bold">Puissance</span>
+                                </div>
+                                <h5 class="text-dark mb-0">{{ voiture.modele.puissance }} ch</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="card shadow border-0 mb-4 animate__animated animate__fadeInUp">
+                <div class="card-body p-4">
+                    <h4 class="text-info fw-bold mb-4">
+                        <i class="fas fa-align-left me-2 fa-bounce"></i> Description
+                    </h4>
+                    <div class="description-content p-4 bg-light rounded animate__animated animate__fadeIn">
+                        <p class="fs-5">{{ voiture.description }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vendeur -->
+            <div class="card shadow border-0 animate__animated animate__fadeInUp">
+                <div class="card-body p-4">
+                    <h4 class="text-primary fw-bold mb-4">
+                        <i class="fas fa-user-tie me-2 fa-spin" style="animation-duration: 2s;"></i> Vendeur
+                    </h4>
+                    <div class="row align-items-center">
+                        <div class="col-md-2 text-center mb-3 mb-md-0">
+                            <div class="seller-avatar rounded-circle bg-gradient-primary p-4 d-inline-block">
+                                <i class="fas fa-user fa-3x text-white"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            <h5 class="fw-bold text-dark mb-2">
+                                <i class="fas fa-badge-check text-success me-2"></i>
+                                {{ voiture.vendeur.username }}
+                            </h5>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-calendar-check me-2"></i>
+                                Membre depuis : {{ voiture.vendeur.date_joined|date:"d/m/Y" }}
+                            </p>
+                            <div class="seller-stats d-flex gap-3">
+                                <span class="badge bg-primary bg-gradient">
+                                    <i class="fas fa-star me-1"></i> 4.8/5
+                                </span>
+                                <span class="badge bg-success bg-gradient">
+                                    <i class="fas fa-check-circle me-1"></i> Vérifié
+                                </span>
+                                <span class="badge bg-info bg-gradient">
+                                    <i class="fas fa-comments me-1"></i> Réponse rapide
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Actions -->
+        <div class="col-lg-4">
+            <div class="sticky-sidebar">
+                <!-- Actions principales -->
+                <div class="card shadow-lg border-0 mb-4 animate__animated animate__bounceInRight">
+                    <div class="card-header gradient-action text-white py-3">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-bolt me-2 fa-shake"></i> Actions rapides
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if user.is_authenticated and user != voiture.vendeur and not voiture.est_vendue %}
+                        <div class="d-grid gap-3 mb-4">
+                            <a href="{% url 'acheter_voiture' voiture.id %}" 
+                               class="btn btn-success btn-gradient btn-lg shadow-lg animate__animated animate__pulse animate__infinite"
+                               style="animation-duration: 1.5s;">
+                                <i class="fas fa-shopping-cart me-2 fa-beat"></i> Acheter maintenant
+                            </a>
+                            <a href="{% url 'toggle_favori' voiture.id %}" 
+                               class="btn btn-outline-primary btn-lg shadow-sm hover-grow">
+                                <i class="fas fa-heart me-2 beat-icon"></i> Ajouter aux favoris
+                            </a>
+                        </div>
+                        {% elif user == voiture.vendeur %}
+                        <div class="d-grid gap-3 mb-4">
+                            <a href="{% url 'modifier_voiture' voiture.id %}" 
+                               class="btn btn-warning btn-gradient btn-lg shadow-lg hover-glow">
+                                <i class="fas fa-edit me-2 fa-spin" style="animation-duration: 2s;"></i> Modifier l'annonce
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-grid">
+                            <a href="{% url 'liste_voitures' %}" 
+                               class="btn btn-outline-secondary btn-lg shadow-sm hover-grow">
+                                <i class="fas fa-arrow-left me-2"></i> Retour aux annonces
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Partager -->
+                <div class="card shadow border-0 mb-4 animate__animated animate__fadeInUp">
+                    <div class="card-body p-4">
+                        <h6 class="text-purple fw-bold mb-3">
+                            <i class="fas fa-share-alt me-2 fa-spin" style="animation-duration: 3s;"></i> 
+                            Partager cette annonce
+                        </h6>
+                        <div class="d-flex justify-content-center gap-2 mb-3">
+                            <button type="button" class="btn btn-circle btn-facebook shadow-sm">
+                                <i class="fab fa-facebook-f fa-lg"></i>
+                            </button>
+                            <button type="button" class="btn btn-circle btn-twitter shadow-sm">
+                                <i class="fab fa-twitter fa-lg"></i>
+                            </button>
+                            <button type="button" class="btn btn-circle btn-whatsapp shadow-sm">
+                                <i class="fab fa-whatsapp fa-lg"></i>
+                            </button>
+                            <button type="button" class="btn btn-circle btn-linkedin shadow-sm">
+                                <i class="fab fa-linkedin-in fa-lg"></i>
+                            </button>
+                            <button type="button" class="btn btn-circle btn-instagram shadow-sm">
+                                <i class="fab fa-instagram fa-lg"></i>
+                            </button>
+                        </div>
+                        <div class="input-group shadow-sm">
+                            <input type="text" class="form-control border-primary" 
+                                   value="{{ request.build_absolute_uri }}" 
+                                   id="shareUrl" readonly>
+                            <button class="btn btn-primary btn-gradient" onclick="copyShareUrl()">
+                                <i class="fas fa-copy me-2"></i> Copier
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistiques -->
+                <div class="card shadow border-0 animate__animated animate__fadeInUp">
+                    <div class="card-body p-4">
+                        <h6 class="text-info fw-bold mb-3">
+                            <i class="fas fa-chart-line me-2 fa-bounce"></i> Statistiques
+                        </h6>
+                        <div class="stats-grid">
+                            <div class="stat-item text-center p-3 bg-info bg-opacity-10 rounded mb-3">
+                                <i class="fas fa-eye fa-2x text-info mb-2"></i>
+                                <h5 class="fw-bold mb-0">1,247</h5>
+                                <small class="text-muted">Vues</small>
+                            </div>
+                            <div class="stat-item text-center p-3 bg-success bg-opacity-10 rounded mb-3">
+                                <i class="fas fa-heart fa-2x text-success mb-2 beat-icon"></i>
+                                <h5 class="fw-bold mb-0">89</h5>
+                                <small class="text-muted">Favoris</small>
+                            </div>
+                            <div class="stat-item text-center p-3 bg-warning bg-opacity-10 rounded">
+                                <i class="fas fa-clock fa-2x text-warning mb-2 fa-spin"></i>
+                                <h5 class="fw-bold mb-0">5 jours</h5>
+                                <small class="text-muted">En ligne</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.gradient-header {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+}
+
+.gradient-price {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+}
+
+.gradient-action {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.bg-gradient-light {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.btn-gradient {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    border: none;
+    color: white;
+    transition: all 0.3s;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 65, 108, 0.4);
+}
+
+.hover-grow {
+    transition: transform 0.3s;
+}
+
+.hover-grow:hover {
+    transform: scale(1.05);
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
+}
+
+.info-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.seller-avatar {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+}
+
+.btn-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    color: white;
+    transition: transform 0.3s;
+}
+
+.btn-circle:hover {
+    transform: scale(1.1);
+}
+
+.btn-facebook { background: #1877f2; }
+.btn-twitter { background: #1da1f2; }
+.btn-whatsapp { background: #25d366; }
+.btn-linkedin { background: #0077b5; }
+.btn-instagram { 
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+.beat-icon {
+    animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.car-icon {
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotateY(0); }
+    100% { transform: rotateY(360deg); }
+}
+
+.sticky-sidebar {
+    position: sticky;
+    top: 20px;
+}
+
+.text-purple { color: #6a11cb !important; }
+.text-teal { color: #20c997 !important; }
+.bg-purple { background-color: #6a11cb !important; }
+.bg-teal { background-color: #20c997 !important; }
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.description-content {
+    border-left: 4px solid #17a2b8;
+}
+</style>
+
+<script>
+function copyShareUrl() {
+    const shareUrl = document.getElementById('shareUrl');
+    shareUrl.select();
+    shareUrl.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(shareUrl.value);
+    
+    // Animation de feedback
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check me-2"></i> Copié !';
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-success');
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('btn-success');
+        btn.classList.add('btn-primary');
+    }, 2000);
+}
+
+// Animation au scroll
+document.addEventListener('DOMContentLoaded', function() {
+    const elements = document.querySelectorAll('.animate__animated');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const animation = entry.target.dataset.animation || 'animate__fadeInUp';
+                entry.target.classList.add(animation);
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    elements.forEach(element => {
+        element.dataset.animation = element.classList[1];
+        observer.observe(element);
+    });
+});
+</script>
+{% endblock %}

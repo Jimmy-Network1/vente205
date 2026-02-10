@@ -1,0 +1,495 @@
+{% extends 'base.html' %}
+
+{% block title %}Voitures disponibles - AutoMarket{% endblock %}
+
+{% block content %}
+<div class="row animate__animated animate__fadeIn">
+    <!-- Sidebar Filtres -->
+    <div class="col-md-3">
+        <!-- Carte Filtres -->
+        <div class="card mb-4 shadow-lg border-0 sticky-top animate__animated animate__slideInLeft">
+            <div class="card-header gradient-header text-white py-3">
+                <h5 class="mb-0 fw-bold">
+                    <i class="fas fa-filter fa-spin me-2"></i> Filtres
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{% url 'liste_voitures' %}" id="filterForm">
+                    <!-- Marque -->
+                    <div class="mb-3">
+                        <label for="marque" class="form-label text-primary fw-bold">
+                            <i class="fas fa-car me-2"></i>Marque
+                        </label>
+                        <select class="form-select border-primary border-2 shadow-sm" id="marque" name="marque">
+                            <option value="" class="text-muted">🏁 Toutes les marques</option>
+                            {% for marque in marques %}
+                            <option value="{{ marque.id }}" 
+                                    {% if marque_selected == marque.id %}selected{% endif %}
+                                    class="fw-bold">
+                                🚘 {{ marque.nom }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Prix Min -->
+                    <div class="mb-3">
+                        <label for="prix_min" class="form-label text-success fw-bold">
+                            <i class="fas fa-euro-sign me-2"></i>Prix min (€)
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-success text-white border-success">
+                                <i class="fas fa-arrow-down"></i>
+                            </span>
+                            <input type="number" 
+                                   class="form-control border-success border-2" 
+                                   id="prix_min" 
+                                   name="prix_min" 
+                                   value="{{ prix_min|default:'' }}" 
+                                   min="0"
+                                   placeholder="Prix minimum">
+                        </div>
+                    </div>
+                    
+                    <!-- Prix Max -->
+                    <div class="mb-3">
+                        <label for="prix_max" class="form-label text-danger fw-bold">
+                            <i class="fas fa-euro-sign me-2"></i>Prix max (€)
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-danger text-white border-danger">
+                                <i class="fas fa-arrow-up"></i>
+                            </span>
+                            <input type="number" 
+                                   class="form-control border-danger border-2" 
+                                   id="prix_max" 
+                                   name="prix_max" 
+                                   value="{{ prix_max|default:'' }}" 
+                                   min="0"
+                                   placeholder="Prix maximum">
+                        </div>
+                    </div>
+                    
+                    <!-- Année Min -->
+                    <div class="mb-3">
+                        <label for="annee_min" class="form-label text-info fw-bold">
+                            <i class="fas fa-calendar me-2"></i>Année min
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-info text-white border-info">
+                                <i class="fas fa-calendar-minus"></i>
+                            </span>
+                            <input type="number" 
+                                   class="form-control border-info border-2" 
+                                   id="annee_min" 
+                                   name="annee_min" 
+                                   value="{{ annee_min|default:'' }}" 
+                                   min="1900" max="2026"
+                                   placeholder="1900">
+                        </div>
+                    </div>
+                    
+                    <!-- Année Max -->
+                    <div class="mb-3">
+                        <label for="annee_max" class="form-label text-warning fw-bold">
+                            <i class="fas fa-calendar me-2"></i>Année max
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-warning text-dark border-warning">
+                                <i class="fas fa-calendar-plus"></i>
+                            </span>
+                            <input type="number" 
+                                   class="form-control border-warning border-2" 
+                                   id="annee_max" 
+                                   name="annee_max" 
+                                   value="{{ annee_max|default:'' }}" 
+                                   min="1900" max="2026"
+                                   placeholder="2026">
+                        </div>
+                    </div>
+                    
+                    <!-- Boutons Filtres -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" 
+                                class="btn btn-primary btn-lg gradient-btn shadow-sm animate__animated animate__pulse animate__infinite"
+                                style="animation-duration: 2s;">
+                            <i class="fas fa-search me-2"></i> Appliquer les filtres
+                        </button>
+                        <a href="{% url 'liste_voitures' %}" 
+                           class="btn btn-outline-danger btn-lg shadow-sm hover-grow">
+                            <i class="fas fa-times-circle me-2"></i> Réinitialiser
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Statistiques -->
+        <div class="card shadow border-0 animate__animated animate__fadeInUp">
+            <div class="card-body text-center">
+                <h6 class="text-purple fw-bold mb-3">
+                    <i class="fas fa-chart-bar fa-spin me-2"></i> Statistiques
+                </h6>
+                <div class="stat-item mb-3 p-3 rounded bg-primary bg-opacity-10">
+                    <div class="stat-icon mb-2">
+                        <i class="fas fa-car fa-2x text-primary bounce-icon"></i>
+                    </div>
+                    <h3 class="text-dark fw-bold">{{ voitures|length }}</h3>
+                    <p class="mb-0 text-muted">Voitures trouvées</p>
+                </div>
+                <div class="stat-item p-3 rounded bg-success bg-opacity-10">
+                    <div class="stat-icon mb-2">
+                        <i class="fas fa-euro-sign fa-2x text-success beat-icon"></i>
+                    </div>
+                    <h3 class="text-dark fw-bold">{{ prix_moyen|default:0|floatformat:0 }} €</h3>
+                    <p class="mb-0 text-muted">Prix moyen</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contenu Principal -->
+    <div class="col-md-9">
+        <!-- En-tête avec animations -->
+        <div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeInDown">
+            <div>
+                <h1 class="mb-0 text-primary fw-bold">
+                    <i class="fas fa-car-side me-2 fa-shake" style="animation-duration: 2s;"></i>
+                    Voitures disponibles
+                </h1>
+                <p class="text-muted mb-0">Découvrez notre sélection exceptionnelle</p>
+            </div>
+            <div>
+                <span class="badge bg-primary bg-gradient px-3 py-2 fs-6 shadow-sm">
+                    <i class="fas fa-tag me-1"></i> {{ voitures|length }} annonce(s)
+                </span>
+                {% if user.is_authenticated %}
+                <a href="{% url 'ajouter_voiture' %}" 
+                   class="btn btn-success btn-lg gradient-success ms-3 shadow-lg hover-grow">
+                    <i class="fas fa-plus-circle me-2 fa-spin" style="animation-duration: 1.5s;"></i> 
+                    Vendre une voiture
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Liste des voitures -->
+        {% if voitures %}
+        <div class="row">
+            {% for voiture in voitures %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow border-0 hover-card animate__animated animate__fadeInUp"
+                     style="animation-delay: { forloop.counter0|add:0.1 }s;">
+                    <!-- Badge Vendue -->
+                    {% if voiture.est_vendue %}
+                    <div class="sold-overlay">
+                        <span class="badge bg-danger bg-gradient px-3 py-2 fs-6">
+                            <i class="fas fa-tags me-1"></i> Vendue
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Image -->
+                    <div class="card-img-container position-relative overflow-hidden">
+                        <div class="card-img-top bg-gradient-light" 
+                             style="height: 200px; display: flex; align-items: center; justify-content: center;">
+                            {% if voiture.image_principale %}
+                            <img src="{{ voiture.image_principale.url }}" 
+                                 alt="{{ voiture.modele }}" 
+                                 class="car-image img-fluid"
+                                 style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                            {% else %}
+                            <i class="fas fa-car fa-5x text-secondary car-icon"></i>
+                            {% endif %}
+                        </div>
+                        <!-- Favori -->
+                        {% if user.is_authenticated and user != voiture.vendeur %}
+                        <div class="favorite-btn position-absolute top-0 end-0 m-3">
+                            <a href="{% url 'toggle_favori' voiture.id %}" 
+                               class="btn btn-outline-danger btn-circle shadow-sm">
+                                <i class="fas fa-heart beat-icon"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Contenu -->
+                    <div class="card-body">
+                        <!-- Titre -->
+                        <h5 class="card-title text-dark fw-bold">
+                            <i class="fas fa-car text-primary me-2"></i>
+                            {{ voiture.modele.marque.nom }} {{ voiture.modele.nom }}
+                        </h5>
+                        
+                        <!-- Prix -->
+                        <h6 class="text-primary fs-4 fw-bold mb-3 price-tag">
+                            {{ voiture.prix }} €
+                        </h6>
+                        
+                        <!-- Caractéristiques -->
+                        <div class="car-features mb-3">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <span class="badge bg-info bg-opacity-10 text-info w-100">
+                                        <i class="fas fa-calendar me-1"></i> {{ voiture.annee }}
+                                    </span>
+                                </div>
+                                <div class="col-6">
+                                    <span class="badge bg-success bg-opacity-10 text-success w-100">
+                                        <i class="fas fa-tachometer-alt me-1"></i> 
+                                        {{ voiture.kilometrage|floatformat:0 }} km
+                                    </span>
+                                </div>
+                                <div class="col-6">
+                                    <span class="badge bg-warning bg-opacity-10 text-warning w-100">
+                                        <i class="fas fa-palette me-1"></i> {{ voiture.couleur }}
+                                    </span>
+                                </div>
+                                <div class="col-6">
+                                    <span class="badge bg-danger bg-opacity-10 text-danger w-100">
+                                        <i class="fas fa-star me-1"></i> {{ voiture.etat }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Description -->
+                        <p class="card-text text-muted description-text">
+                            {{ voiture.description|truncatechars:100 }}
+                        </p>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="card-footer bg-white border-top-0 pt-0">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'detail_voiture' voiture.id %}" 
+                               class="btn btn-primary btn-gradient btn-lg shadow-sm hover-grow">
+                                <i class="fas fa-eye me-2"></i> Voir détails
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if voitures.has_other_pages %}
+        <nav aria-label="Page navigation" class="mt-5">
+            <ul class="pagination justify-content-center shadow-sm">
+                {% if voitures.has_previous %}
+                <li class="page-item">
+                    <a class="page-link text-primary border-primary" 
+                       href="?page={{ voitures.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        <i class="fas fa-chevron-left fa-bounce"></i> Précédent
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for num in voitures.paginator.page_range %}
+                {% if voitures.number == num %}
+                <li class="page-item active">
+                    <span class="page-link bg-primary gradient-btn border-0">
+                        {{ num }}
+                    </span>
+                </li>
+                {% elif num > voitures.number|add:'-3' and num < voitures.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link text-dark border-primary" 
+                       href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        {{ num }}
+                    </a>
+                </li>
+                {% endif %}
+                {% endfor %}
+                
+                {% if voitures.has_next %}
+                <li class="page-item">
+                    <a class="page-link text-primary border-primary" 
+                       href="?page={{ voitures.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        Suivant <i class="fas fa-chevron-right fa-bounce"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+        
+        {% else %}
+        <!-- Aucune voiture trouvée -->
+        <div class="alert alert-info text-center shadow-lg border-0 animate__animated animate__shakeX">
+            <div class="py-5">
+                <i class="fas fa-car-crash fa-5x text-info mb-4 fa-beat" style="animation-duration: 2s;"></i>
+                <h4 class="text-dark fw-bold mb-3">🚗 Aucune voiture trouvée</h4>
+                <p class="mb-4 fs-5">Aucune voiture ne correspond à vos critères de recherche.</p>
+                <a href="{% url 'liste_voitures' %}" 
+                   class="btn btn-primary btn-lg gradient-btn px-4">
+                    <i class="fas fa-redo me-2 fa-spin"></i> Voir toutes les voitures
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.gradient-header {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+}
+
+.gradient-btn {
+    background: linear-gradient(45deg, #6a11cb, #2575fc);
+    border: none;
+    color: white;
+}
+
+.gradient-success {
+    background: linear-gradient(45deg, #11998e, #38ef7d);
+    border: none;
+    color: white;
+}
+
+.hover-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid transparent;
+}
+
+.hover-card:hover {
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(106, 17, 203, 0.2) !important;
+    border-color: #6a11cb;
+}
+
+.hover-grow {
+    transition: transform 0.3s;
+}
+
+.hover-grow:hover {
+    transform: scale(1.05);
+}
+
+.price-tag {
+    background: linear-gradient(45deg, #f093fb, #f5576c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.car-image {
+    transition: transform 0.6s;
+}
+
+.hover-card:hover .car-image {
+    transform: scale(1.1);
+}
+
+.car-icon {
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotateY(0); }
+    100% { transform: rotateY(360deg); }
+}
+
+.sold-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    animation: pulseSold 2s infinite;
+}
+
+@keyframes pulseSold {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.bg-gradient-light {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.btn-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.description-text {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 20px;
+}
+
+.text-purple {
+    color: #6a11cb !important;
+}
+
+.bounce-icon {
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+}
+
+.beat-icon {
+    animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.page-link:hover {
+    transform: translateY(-2px);
+    transition: transform 0.3s;
+}
+</style>
+
+<script>
+// Animation au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation des cartes au défilement
+    const cards = document.querySelectorAll('.hover-card');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    cards.forEach(card => {
+        observer.observe(card);
+    });
+    
+    // Validation des filtres
+    const filterForm = document.getElementById('filterForm');
+    filterForm.addEventListener('submit', function(e) {
+        const prixMin = document.getElementById('prix_min').value;
+        const prixMax = document.getElementById('prix_max').value;
+        
+        if (prixMin && prixMax && parseInt(prixMin) > parseInt(prixMax)) {
+            e.preventDefault();
+            alert('⚠️ Le prix minimum ne peut pas être supérieur au prix maximum !');
+            document.getElementById('prix_min').focus();
+        }
+    });
+});
+</script>
+{% endblock %}

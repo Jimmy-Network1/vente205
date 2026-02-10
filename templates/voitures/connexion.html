@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block title %}Connexion - AutoMarket{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animate__animated animate__fadeIn">
+    <div class="col-md-6 col-lg-5">
+        <!-- Carte principale de connexion -->
+        <div class="card shadow-lg border-0 animate__animated animate__bounceIn">
+            <div class="card-header text-center text-white gradient-header py-4">
+                <h3 class="mb-0 fw-bold">
+                    <i class="fas fa-sign-in-alt fa-shake me-2"></i> Connexion
+                </h3>
+                <p class="mb-0 mt-2 opacity-75">Accédez à votre espace personnel</p>
+            </div>
+            
+            <div class="card-body p-4">
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show animate__animated animate__shakeX" 
+                         role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <!-- Formulaire -->
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Nom d'utilisateur -->
+                    <div class="mb-4 form-group floating-label">
+                        <label for="username" class="form-label text-primary fw-bold">
+                            <i class="fas fa-user-circle me-2"></i>Nom d'utilisateur ou Email *
+                        </label>
+                        <input type="text" 
+                               class="form-control form-control-lg border-primary border-2" 
+                               id="username" 
+                               name="username" 
+                               value="{{ request.POST.username|default:'' }}" 
+                               required
+                               placeholder="Votre identifiant">
+                        <div class="invalid-feedback">
+                            Veuillez saisir votre identifiant.
+                        </div>
+                    </div>
+                    
+                    <!-- Mot de passe -->
+                    <div class="mb-4 form-group floating-label">
+                        <label for="password" class="form-label text-primary fw-bold">
+                            <i class="fas fa-lock me-2"></i>Mot de passe *
+                        </label>
+                        <div class="input-group">
+                            <input type="password" 
+                                   class="form-control form-control-lg border-primary border-2" 
+                                   id="password" 
+                                   name="password" 
+                                   required
+                                   placeholder="Votre mot de passe">
+                            <button class="btn btn-outline-primary" 
+                                    type="button" 
+                                    id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="text-end mt-2">
+                            <a href="#" class="text-decoration-none text-warning small hover-glow">
+                                <i class="fas fa-key me-1"></i>Mot de passe oublié ?
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Se souvenir de moi -->
+                    <div class="mb-4 form-check">
+                        <input type="checkbox" 
+                               class="form-check-input border-primary" 
+                               id="remember" 
+                               name="remember"
+                               style="width: 20px; height: 20px;">
+                        <label class="form-check-label ms-2 text-dark" for="remember">
+                            <i class="fas fa-bookmark me-1"></i>Se souvenir de moi
+                        </label>
+                    </div>
+                    
+                    <!-- Bouton de connexion -->
+                    <div class="d-grid gap-2 mb-4">
+                        <button type="submit" 
+                                class="btn btn-lg btn-primary gradient-btn shadow-sm animate__animated animate__pulse animate__infinite"
+                                style="animation-duration: 2s;">
+                            <i class="fas fa-sign-in-alt me-2"></i> Se connecter
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Séparateur -->
+                <div class="divider d-flex align-items-center my-4">
+                    <p class="text-center fw-bold mx-3 mb-0 text-muted">OU</p>
+                </div>
+                
+                <!-- Lien d'inscription -->
+                <div class="text-center">
+                    <p class="mb-3 text-dark">
+                        <i class="fas fa-user-plus me-2 text-success"></i>Nouveau sur AutoMarket ?
+                    </p>
+                    <a href="{% url 'inscription' %}" 
+                       class="btn btn-outline-success btn-lg w-100 hover-grow">
+                        <i class="fas fa-user-plus me-2"></i> Créer un compte
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Comptes de démonstration -->
+        
+    </div>
+</div>
+
+<style>
+.gradient-header {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    border-bottom: 3px solid #ffcc00;
+}
+
+.gradient-btn {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    border: none;
+    transition: transform 0.3s;
+}
+
+.gradient-btn:hover {
+    transform: scale(1.05);
+    background: linear-gradient(45deg, #ff4b2b, #ff416c);
+}
+
+.floating-label input:focus {
+    border-color: #6a11cb !important;
+    box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.25) !important;
+}
+
+.hover-row:hover {
+    transform: scale(1.02);
+    transition: transform 0.3s;
+    cursor: pointer;
+}
+
+.hover-glow:hover {
+    text-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
+    transition: text-shadow 0.3s;
+}
+
+.hover-grow:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s;
+}
+
+.text-purple {
+    color: #6a11cb !important;
+}
+
+.bg-gradient {
+    background: linear-gradient(45deg, #6a11cb, #2575fc);
+}
+
+.divider {
+    color: #6a11cb;
+}
+
+.divider:before,
+.divider:after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #6a11cb, transparent);
+}
+</style>
+
+<script>
+// Afficher/masquer le mot de passe
+document.getElementById('togglePassword').addEventListener('click', function() {
+    const passwordInput = document.getElementById('password');
+    const icon = this.querySelector('i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+        this.classList.remove('btn-outline-primary');
+        this.classList.add('btn-primary');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+        this.classList.remove('btn-primary');
+        this.classList.add('btn-outline-primary');
+    }
+});
+
+// Validation du formulaire
+(function() {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,526 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes ventes - AutoMarket{% endblock %}
+
+{% block content %}
+<div class="container animate__animated animate__fadeIn">
+    <!-- En-tête -->
+    <div class="text-center mb-5 animate__animated animate__bounceInDown">
+        <h1 class="display-4 fw-bold text-success mb-3">
+            <i class="fas fa-store fa-shake me-3" style="animation-duration: 2s;"></i>
+            Historique de mes ventes
+        </h1>
+        <p class="lead text-muted">
+            Gérez et suivez toutes vos transactions en tant que vendeur
+        </p>
+    </div>
+
+    {% if ventes %}
+    <!-- Tableau de bord -->
+    <div class="row mb-5">
+        <div class="col-md-3 mb-4">
+            <div class="card shadow border-0 text-center h-100 animate__animated animate__fadeInLeft hover-card">
+                <div class="card-body py-4">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-chart-bar fa-3x text-primary bounce-icon"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-2">{{ ventes.count }}</h3>
+                    <p class="text-muted mb-0">Ventes totales</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow border-0 text-center h-100 animate__animated animate__fadeInLeft hover-card"
+                 style="animation-delay: 0.1s;">
+                <div class="card-body py-4">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-euro-sign fa-3x text-success beat-icon"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-2">{{ chiffre_affaires|default:0|floatformat:0 }} €</h3>
+                    <p class="text-muted mb-0">Chiffre d'affaires</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow border-0 text-center h-100 animate__animated animate__fadeInRight hover-card"
+                 style="animation-delay: 0.2s;">
+                <div class="card-body py-4">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-check-circle fa-3x text-info fa-spin"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-2">{{ ventes_terminees.count }}</h3>
+                    <p class="text-muted mb-0">Transactions terminées</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow border-0 text-center h-100 animate__animated animate__fadeInRight hover-card"
+                 style="animation-delay: 0.3s;">
+                <div class="card-body py-4">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-star fa-3x text-warning ring-icon"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-2">{{ note_moyenne|default:5|floatformat:1 }}/5</h3>
+                    <p class="text-muted mb-0">Note moyenne</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau des ventes -->
+    <div class="card shadow-lg border-0 animate__animated animate__slideInUp">
+        <div class="card-header gradient-header text-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold">
+                    <i class="fas fa-history me-2 fa-spin" style="animation-duration: 3s;"></i>
+                    Détails des ventes
+                </h5>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-light btn-sm hover-grow">
+                        <i class="fas fa-download me-2"></i> Exporter
+                    </button>
+                    <button class="btn btn-light btn-sm hover-grow">
+                        <i class="fas fa-print me-2"></i> Imprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="text-center">
+                                <i class="fas fa-car me-2"></i>Véhicule
+                            </th>
+                            <th class="text-center">
+                                <i class="fas fa-money-bill-wave me-2"></i>Montant
+                            </th>
+                            <th class="text-center">
+                                <i class="fas fa-user me-2"></i>Acheteur
+                            </th>
+                            <th class="text-center">
+                                <i class="fas fa-calendar-alt me-2"></i>Date
+                            </th>
+                            <th class="text-center">
+                                <i class="fas fa-chart-pie me-2"></i>Statut
+                            </th>
+                            <th class="text-center">
+                                <i class="fas fa-cogs me-2"></i>Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vente in ventes %}
+                        <tr class="table-row animate__animated animate__fadeIn" 
+                            style="animation-delay: {{ forloop.counter0|add:0.1 }}s;">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="vehicle-avatar me-3">
+                                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                            <i class="fas fa-car fa-2x text-success"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <strong class="text-dark">
+                                            {{ vente.voiture.modele.marque.nom }} {{ vente.voiture.modele.nom }}
+                                        </strong>
+                                        <div class="vehicle-info">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar-alt me-1"></i>{{ vente.voiture.annee }}
+                                                <i class="fas fa-road ms-2 me-1"></i>{{ vente.voiture.kilometrage }} km
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center align-middle">
+                                <div class="revenue-tag">
+                                    <span class="fw-bold fs-5 text-success">
+                                        +{{ vente.prix_final }} €
+                                    </span>
+                                    <small class="d-block text-muted">
+                                        <i class="fas fa-percentage"></i> Commission : {{ commission|default:0 }} €
+                                    </small>
+                                </div>
+                            </td>
+                            <td class="text-center align-middle">
+                                <div class="buyer-info">
+                                    <span class="badge bg-info bg-gradient px-3 py-2">
+                                        <i class="fas fa-user-check me-1"></i>
+                                        {{ vente.acheteur.username }}
+                                    </span>
+                                    <small class="d-block text-muted mt-1">
+                                        <i class="fas fa-star text-warning"></i> 
+                                        {{ vente.acheteur.profile.note_moyenne|default:"-" }}/5
+                                    </small>
+                                </div>
+                            </td>
+                            <td class="text-center align-middle">
+                                <div class="date-display">
+                                    <span class="badge bg-dark bg-gradient px-3 py-2">
+                                        <i class="fas fa-clock me-1"></i>
+                                        {{ vente.date_transaction|date:"d/m/Y" }}
+                                    </span>
+                                    <small class="d-block text-muted mt-1">
+                                        {{ vente.date_transaction|timesince }}
+                                    </small>
+                                </div>
+                            </td>
+                            <td class="text-center align-middle">
+                                {% if vente.statut == 'terminee' %}
+                                <div class="status-badge">
+                                    <span class="badge bg-success bg-gradient px-3 py-2 animate__animated animate__pulse animate__infinite"
+                                          style="animation-duration: 2s;">
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        {{ vente.get_statut_display }}
+                                    </span>
+                                    <small class="d-block text-success mt-1">
+                                        <i class="fas fa-trophy"></i> Vente réussie
+                                    </small>
+                                </div>
+                                {% elif vente.statut == 'confirmee' %}
+                                <div class="status-badge">
+                                    <span class="badge bg-primary bg-gradient px-3 py-2">
+                                        <i class="fas fa-check me-1"></i>
+                                        {{ vente.get_statut_display }}
+                                    </span>
+                                    <small class="d-block text-primary mt-1">
+                                        <i class="fas fa-truck"></i> En cours
+                                    </small>
+                                </div>
+                                {% elif vente.statut == 'en_attente' %}
+                                <div class="status-badge">
+                                    <span class="badge bg-warning bg-gradient px-3 py-2 animate__animated animate__flash animate__infinite"
+                                          style="animation-duration: 3s;">
+                                        <i class="fas fa-hourglass-half me-1"></i>
+                                        {{ vente.get_statut_display }}
+                                    </span>
+                                    <small class="d-block text-warning mt-1">
+                                        <i class="fas fa-exclamation-circle"></i> Action requise
+                                    </small>
+                                </div>
+                                {% else %}
+                                <div class="status-badge">
+                                    <span class="badge bg-danger bg-gradient px-3 py-2 animate__animated animate__shakeX animate__infinite"
+                                          style="animation-duration: 5s;">
+                                        <i class="fas fa-times-circle me-1"></i>
+                                        {{ vente.get_statut_display }}
+                                    </span>
+                                    <small class="d-block text-danger mt-1">
+                                        <i class="fas fa-ban"></i> Annulée
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td class="text-center align-middle">
+                                <div class="action-buttons">
+                                    {% if vente.statut == 'en_attente' %}
+                                    <a href="{% url 'confirmer_vente' vente.id %}" 
+                                       class="btn btn-success btn-gradient btn-sm mb-1 shadow-sm hover-grow">
+                                        <i class="fas fa-check me-2 fa-beat"></i> Confirmer
+                                    </a>
+                                    {% endif %}
+                                    <div class="btn-group btn-group-sm mt-1" role="group">
+                                        <a href="{% url 'detail_voiture' vente.voiture.id %}" 
+                                           class="btn btn-outline-primary hover-grow"
+                                           title="Voir l'annonce">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <button class="btn btn-outline-info hover-grow"
+                                                title="Contacter l'acheteur">
+                                            <i class="fas fa-comment-dots"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning hover-grow"
+                                                title="Générer facture">
+                                            <i class="fas fa-file-invoice"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphique de performance -->
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <div class="card shadow border-0 h-100 animate__animated animate__fadeInLeft">
+                <div class="card-body p-4">
+                    <h5 class="text-purple fw-bold mb-4">
+                        <i class="fas fa-chart-line me-2 fa-bounce"></i> Performance mensuelle
+                    </h5>
+                    <div class="chart-placeholder text-center p-5 bg-gradient-light rounded">
+                        <i class="fas fa-chart-bar fa-5x text-info mb-3"></i>
+                        <p class="text-muted">Graphique de vos ventes mensuelles</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow border-0 h-100 animate__animated animate__fadeInRight">
+                <div class="card-body p-4">
+                    <h5 class="text-success fw-bold mb-4">
+                        <i class="fas fa-trophy me-2 fa-spin"></i> Statistiques vendeur
+                    </h5>
+                    <div class="seller-stats">
+                        <div class="stat-item mb-3 p-3 rounded bg-success bg-opacity-10">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Taux de réussite</span>
+                                <span class="badge bg-success px-3 py-2">
+                                    {{ taux_reussite|default:95 }}%
+                                </span>
+                            </div>
+                            <div class="progress mt-2" style="height: 8px;">
+                                <div class="progress-bar bg-gradient-success" 
+                                     style="width: {{ taux_reussite|default:95 }}%"></div>
+                            </div>
+                        </div>
+                        <div class="stat-item mb-3 p-3 rounded bg-primary bg-opacity-10">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Temps de vente moyen</span>
+                                <span class="badge bg-primary px-3 py-2">
+                                    {{ temps_moyen_vente|default:7 }} jours
+                                </span>
+                            </div>
+                        </div>
+                        <div class="stat-item p-3 rounded bg-warning bg-opacity-10">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Satisfaction clients</span>
+                                <span class="badge bg-warning px-3 py-2">
+                                    <i class="fas fa-star me-1"></i> 4.8/5
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Aucune vente -->
+    <div class="text-center py-5 animate__animated animate__bounceIn">
+        <div class="empty-state mb-5">
+            <div class="store-icon mb-4">
+                <i class="fas fa-store fa-5x text-success mb-3 store-animation"></i>
+            </div>
+            <h3 class="text-dark fw-bold mb-3">Votre boutique est vide !</h3>
+            <p class="text-muted mb-4 fs-5">
+                Commencez à vendre vos véhicules et générez des revenus dès aujourd'hui
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'ajouter_voiture' %}" 
+                   class="btn btn-success btn-gradient btn-lg shadow-lg animate__animated animate__pulse animate__infinite"
+                   style="animation-duration: 1.5s;">
+                    <i class="fas fa-plus-circle me-2 fa-beat"></i> Publier une annonce
+                </a>
+                <a href="#" class="btn btn-outline-success btn-lg shadow-sm hover-grow">
+                    <i class="fas fa-graduation-cap me-2"></i> Guide du vendeur
+                </a>
+            </div>
+        </div>
+        
+        <!-- Conseils -->
+        <div class="row mt-5">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100 hover-card animate__animated animate__fadeInLeft">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-camera fa-3x text-primary mb-3 bounce-icon"></i>
+                        <h5 class="fw-bold text-dark mb-3">Photos de qualité</h5>
+                        <p class="text-muted">Prenez de belles photos pour attirer plus d'acheteurs</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100 hover-card animate__animated animate__fadeInUp">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-tags fa-3x text-success mb-3 beat-icon"></i>
+                        <h5 class="fw-bold text-dark mb-3">Prix compétitif</h5>
+                        <p class="text-muted">Fixez un prix attractif pour vendre plus rapidement</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100 hover-card animate__animated animate__fadeInRight">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-comments fa-3x text-info mb-3 ring-icon"></i>
+                        <h5 class="fw-bold text-dark mb-3">Réponse rapide</h5>
+                        <p class="text-muted">Répondez rapidement aux questions des acheteurs</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.gradient-header {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.btn-gradient {
+    background: linear-gradient(45deg, #11998e, #38ef7d);
+    border: none;
+    color: white;
+}
+
+.bg-gradient-success {
+    background: linear-gradient(45deg, #11998e, #38ef7d);
+}
+
+.hover-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.hover-grow {
+    transition: transform 0.3s;
+}
+
+.hover-grow:hover {
+    transform: scale(1.1);
+}
+
+.table-row {
+    transition: all 0.3s;
+}
+
+.table-row:hover {
+    background: linear-gradient(90deg, rgba(17, 153, 142, 0.05), rgba(56, 239, 125, 0.05));
+    transform: translateX(5px);
+}
+
+.bounce-icon {
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+}
+
+.beat-icon {
+    animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.ring-icon {
+    animation: ring 2s infinite;
+}
+
+@keyframes ring {
+    0% { transform: rotate(0); }
+    25% { transform: rotate(15deg); }
+    75% { transform: rotate(-15deg); }
+    100% { transform: rotate(0); }
+}
+
+.bg-gradient {
+    background: linear-gradient(45deg, #6a11cb, #2575fc);
+}
+
+.bg-gradient-light {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.text-purple {
+    color: #6a11cb !important;
+}
+
+.vehicle-avatar {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0); }
+}
+
+.revenue-tag {
+    position: relative;
+}
+
+.revenue-tag:after {
+    content: '💰';
+    position: absolute;
+    top: -5px;
+    right: -15px;
+    font-size: 1.5rem;
+    animation: coinSpin 2s infinite;
+}
+
+@keyframes coinSpin {
+    0% { transform: rotateY(0); }
+    100% { transform: rotateY(360deg); }
+}
+
+.store-animation {
+    animation: storeBounce 2s infinite;
+}
+
+@keyframes storeBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.table th {
+    border-bottom: 3px solid #11998e !important;
+}
+
+.progress-bar {
+    border-radius: 4px;
+}
+
+.seller-stats .stat-item {
+    transition: transform 0.3s;
+}
+
+.seller-stats .stat-item:hover {
+    transform: translateX(5px);
+}
+</style>
+
+<script>
+// Animation des lignes du tableau
+document.addEventListener('DOMContentLoaded', function() {
+    const rows = document.querySelectorAll('.table-row');
+    
+    rows.forEach((row, index) => {
+        row.style.animationDelay = `${index * 0.1}s`;
+    });
+    
+    // Animation des cartes
+    const cards = document.querySelectorAll('.hover-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.2}s`;
+    });
+    
+    // Animation au scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate__animated', 'animate__fadeIn');
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    rows.forEach(row => observer.observe(row));
+    cards.forEach(card => observer.observe(card));
+});
+</script>
+{% endblock %}

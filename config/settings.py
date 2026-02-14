@@ -23,10 +23,32 @@ def _env_csv(name: str) -> list[str]:
     return [part.strip() for part in value.split(",") if part.strip()]
 
 
-ALLOWED_HOSTS = _env_csv("ALLOWED_HOSTS") or ["localhost", "127.0.0.1"]
-RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
-if not DEBUG and RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+def _dedupe_csv(values: list[str]) -> list[str]:
+    seen: set[str] = set()
+    output: list[str] = []
+    for value in values:
+        if value in seen:
+            continue
+        output.append(value)
+        seen.add(value)
+    return output
+
+
+_render_external_hostname = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+RENDER_EXTERNAL_HOSTNAME = _render_external_hostname
+
+_default_allowed_hosts = ["localhost", "127.0.0.1", "[::1]"]
+_allowed_hosts = _env_csv("ALLOWED_HOSTS")
+if _render_external_hostname:
+    _allowed_hosts.append(_render_external_hostname)
+
+ALLOWED_HOSTS = _dedupe_csv(_allowed_hosts) or _default_allowed_hosts
+
+_csrf_trusted_origins = _env_csv("CSRF_TRUSTED_ORIGINS")
+if _render_external_hostname:
+    _csrf_trusted_origins.append(f"https://{_render_external_hostname}")
+
+CSRF_TRUSTED_ORIGINS = _dedupe_csv(_csrf_trusted_origins)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -144,8 +166,6 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    if RENDER_EXTERNAL_HOSTNAME:
-        CSRF_TRUSTED_ORIGINS = [f"https://{RENDER_EXTERNAL_HOSTNAME}"]
 
 # Email (réinitialisation mot de passe)
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@automarket.local")

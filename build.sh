@@ -14,6 +14,9 @@ python manage.py collectstatic --noinput
 echo "🔄 Application des migrations..."
 python manage.py migrate --noinput
 
+# Créer une image par défaut si manquante (évite les 404 sur /media/voitures/default.jpg)
+python manage.py ensure_default_media || true
+
 # Création des données initiales
 echo "📊 Création des données de démo..."
 python manage.py shell -c "
@@ -58,7 +61,13 @@ marques = [
 ]
 
 for nom, pays in marques:
-    Marque.objects.get_or_create(nom=nom, pays=pays)
+    Marque.objects.get_or_create(
+        nom=nom,
+        defaults={
+            'pays': pays,
+            'date_creation': datetime.date(2000, 1, 1),
+        }
+    )
 
 print(f'✓ {len(marques)} marques créées')
 

@@ -41,11 +41,19 @@ pip install -r requirements.txt
 # Variables d'environnement (optionnel)
 # cp .env.example .env  (puis adaptez SECRET_KEY / DEBUG / DATABASE_URL)
 
-# Configurer la base de données
+# Base de données (PostgreSQL recommandé / demandé pour le TP)
+# 1) Démarrer PostgreSQL (Docker)
+docker compose up -d db
+# 2) Mettre DATABASE_URL dans .env, ex:
+#    DATABASE_URL=postgres://vente_voitures_user:vente_voitures_password@localhost:5432/vente_voitures
+# 3) Appliquer les migrations
 python manage.py migrate
+# (Optionnel) Générer l'image par défaut des annonces
+python manage.py ensure_default_media
 
 # Créer un superutilisateur
 python manage.py createsuperuser
 
 # Lancer le serveur
 python manage.py runserver
+```

@@ -24,6 +24,9 @@ def _env_csv(name: str) -> list[str]:
 
 
 ALLOWED_HOSTS = _env_csv("ALLOWED_HOSTS") or ["localhost", "127.0.0.1"]
+RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+if not DEBUG and RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -82,6 +85,13 @@ DATABASES = {
         conn_health_checks=True,
     )
 }
+REQUIRE_POSTGRES = _env_bool("REQUIRE_POSTGRES", default=False)
+if REQUIRE_POSTGRES and "sqlite3" in DATABASES["default"]["ENGINE"]:
+    from django.core.exceptions import ImproperlyConfigured
+
+    raise ImproperlyConfigured(
+        "PostgreSQL requis: définissez DATABASE_URL vers une base Postgres (ex: postgres://...)."
+    )
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -134,6 +144,8 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    if RENDER_EXTERNAL_HOSTNAME:
+        CSRF_TRUSTED_ORIGINS = [f"https://{RENDER_EXTERNAL_HOSTNAME}"]
 
 # Email (réinitialisation mot de passe)
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@automarket.local")

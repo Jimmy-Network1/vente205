@@ -7,7 +7,7 @@ services:
     plan: free
     buildCommand: |
       bash build.sh
-    startCommand: gunicorn config.wsgi:application
+    startCommand: bash start.sh
     healthCheckPath: /
     envVars:
       - key: DATABASE_URL
@@ -20,6 +20,8 @@ services:
         value: false
       - key: REQUIRE_POSTGRES
         value: true
+      - key: PYTHONUNBUFFERED
+        value: "1"
 
 databases:
   - name: vente-voitures-db

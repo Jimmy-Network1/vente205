@@ -131,4 +131,7 @@ print(f'✓ {len(voitures)} voitures créées')
 print('✅ Données de démo créées avec succès!')
 "
 
+# Générer des images de démo (utile si stockage média non persistant)
+python manage.py generate_demo_images || true
+
 echo "✅ Build terminé avec succès!"

@@ -32,3 +32,8 @@ Thumbs.db
 
 # Assets locaux (non versionnés)
 LES IMAGES/
+
+# Aperçus / fichiers locaux
+preview/
+os
+sys

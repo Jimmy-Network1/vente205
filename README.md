@@ -3,6 +3,9 @@
 ## 🌐 Démo en ligne
 **URL :** https://vente-voitures.onrender.com
 
+> Note (Render plan gratuit) : après quelques minutes d’inactivité, Render peut mettre le service en veille.
+> Le premier chargement peut alors prendre 10–30s. Rafraîchissez la page si besoin.
+
 ## 👥 Comptes de test
 - **Admin :** admin / Admin123!
 - **Vendeur :** vendeur / Vendeur123!
@@ -50,6 +53,9 @@ docker compose up -d db
 python manage.py migrate
 # (Optionnel) Générer l'image par défaut des annonces
 python manage.py ensure_default_media
+
+# (Optionnel) Créer des comptes + données de démo
+python initialiser_donnees.py
 
 # Créer un superutilisateur
 python manage.py createsuperuser

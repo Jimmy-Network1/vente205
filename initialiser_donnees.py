@@ -11,6 +11,34 @@ django.setup()
 from voitures.models import Marque, Modele, Voiture
 from django.contrib.auth.models import User
 
+DEMO_ACCOUNTS = {
+    "admin": {
+        "email": "admin@automarket.com",
+        "password": "Admin123!",
+        "first_name": "Admin",
+        "last_name": "AutoMarket",
+        "is_staff": True,
+        "is_superuser": True,
+    },
+    "vendeur": {
+        "email": "vendeur@automarket.com",
+        "password": "Vendeur123!",
+        "first_name": "Jean",
+        "last_name": "Dupont",
+        "is_staff": False,
+        "is_superuser": False,
+    },
+    "acheteur": {
+        "email": "acheteur@automarket.com",
+        "password": "Acheteur123!",
+        "first_name": "Marie",
+        "last_name": "Martin",
+        "is_staff": False,
+        "is_superuser": False,
+    },
+}
+
+
 def creer_marques():
     marques_data = [
         {'nom': 'Renault', 'pays': 'France', 'date_creation': date(1899, 2, 25)},
@@ -48,23 +76,40 @@ def creer_modeles():
     
     print("Modèles créés avec succès!")
 
-def creer_utilisateur_test():
-    user, created = User.objects.get_or_create(
-        username='testuser',
-        defaults={
-            'email': 'test@example.com',
-            'first_name': 'Test',
-            'last_name': 'User'
-        }
-    )
-    if created:
-        user.set_password('testpass123')
+def creer_comptes_demo():
+    users = {}
+    for username, data in DEMO_ACCOUNTS.items():
+        password = data["password"]
+        user, created = User.objects.get_or_create(
+            username=username,
+            defaults={
+                "email": data["email"],
+                "first_name": data["first_name"],
+                "last_name": data["last_name"],
+                "is_staff": data["is_staff"],
+                "is_superuser": data["is_superuser"],
+            },
+        )
+
+        changed = False
+        for field in ("email", "first_name", "last_name", "is_staff", "is_superuser"):
+            value = data[field]
+            if getattr(user, field) != value:
+                setattr(user, field, value)
+                changed = True
+
+        user.set_password(password)
+        user.is_active = True
         user.save()
-        print("Utilisateur test créé avec succès!")
-    return user
+
+        label = "créé" if created else "mis à jour"
+        print(f"Compte {label}: {username} / {password}")
+        users[username] = user
+
+    return users
 
 def creer_voitures_test():
-    user = User.objects.get(username='testuser')
+    user = User.objects.get(username='vendeur')
     
     voitures_data = [
         {
@@ -108,6 +153,6 @@ if __name__ == '__main__':
     print("Initialisation des données...")
     creer_marques()
     creer_modeles()
-    creer_utilisateur_test()
+    creer_comptes_demo()
     creer_voitures_test()
     print("Initialisation terminée!")
